@@ -79,7 +79,7 @@ function ProjectDetail() {
       <section className="mt-14">
         <h2 className="font-display text-2xl uppercase">Gallery</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {project.gallery.map((src, i) => (
+          {project.gallery.map((src: string, i: number) => (
             <div key={i} className="overflow-hidden rounded-md border border-border">
               <img src={src} alt={`${project.title} image ${i + 1}`} className="aspect-[4/3] w-full object-cover transition-transform duration-500 hover:scale-105" loading="lazy" width={1280} height={800} />
             </div>
