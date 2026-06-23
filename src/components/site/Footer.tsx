@@ -19,6 +19,9 @@ export function Footer() {
           <p className="mt-4 text-xs text-white/50">
             CIN: <span className="text-white/80">{COMPANY.cin}</span>
           </p>
+          <p className="mt-2 text-xs text-white/50">
+            GST/PAN registered Indian Private Limited Company.
+          </p>
         </div>
 
         <div>
@@ -29,21 +32,33 @@ export function Footer() {
             <li><Link to="/projects" className="hover:text-primary">Projects</Link></li>
             <li><Link to="/blog" className="hover:text-primary">Blog</Link></li>
             <li><Link to="/contact" className="hover:text-primary">Contact</Link></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="font-display text-sm tracking-widest">LEGAL</h4>
-          <ul className="mt-4 space-y-2 text-sm text-white/70">
             <li><Link to="/terms" className="hover:text-primary">Terms &amp; Conditions</Link></li>
             <li><Link to="/privacy" className="hover:text-primary">Privacy Policy</Link></li>
           </ul>
         </div>
 
         <div>
+          <h4 className="font-display text-sm tracking-widest">SERVING ACROSS</h4>
+          <ul className="mt-4 grid grid-cols-2 gap-y-2 text-sm text-white/70">
+            {COMPANY.cities.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+          <h4 className="mt-6 font-display text-sm tracking-widest">SERVICES</h4>
+          <p className="mt-3 text-sm text-white/70">{COMPANY.services.join(" · ")}</p>
+        </div>
+
+        <div>
           <h4 className="font-display text-sm tracking-widest">CONTACT</h4>
           <ul className="mt-4 space-y-3 text-sm text-white/70">
-            <li className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 text-primary" />{COMPANY.address}</li>
+            <li className="flex items-start gap-2">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <span className="leading-relaxed">
+                {COMPANY.addressLines.map((l, i) => (
+                  <span key={i} className="block">{l}</span>
+                ))}
+              </span>
+            </li>
             <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-primary" />{COMPANY.phone}</li>
             <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-primary" />{COMPANY.email}</li>
           </ul>

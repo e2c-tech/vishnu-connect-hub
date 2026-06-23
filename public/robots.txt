@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://vishnu-connect-hub.lovable.app/sitemap.xml
