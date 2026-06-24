@@ -45,21 +45,10 @@ function HomePage() {
   return (
     <>
       {/* HERO */}
-      <section className="relative isolate overflow-hidden text-white min-h-[640px] flex items-center">
+      <section className="relative isolate overflow-hidden text-white min-h-[640px] flex items-center py-28 sm:py-36">
         <HeroCarousel />
-        <div className="relative mx-auto w-full max-w-7xl px-4 py-28 sm:px-6 sm:py-36">
-          <span className="inline-block rounded-full border border-white/30 bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest backdrop-blur">
-            Since 2012 · CIN {COMPANY.cin}
-          </span>
-          <h1 className="mt-5 font-display text-5xl uppercase leading-[0.95] sm:text-7xl md:text-8xl">
-            SRI VISHNU<br />
-            <span className="text-primary">CONSOL</span>
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg text-white/85 sm:text-xl">
-            Scaffolding, construction, building &amp; interior contractor —
-            delivering landmark projects across Bangalore, Mumbai, Pune, Chennai, Hyderabad, Kolkata, Noida, Mysore &amp; Mangalore.
-          </p>
-          <div className="mt-9 flex flex-wrap gap-3">
+        <div className="relative z-10 mx-auto mt-8 w-full max-w-7xl px-4 sm:px-6">
+          <div className="mt-10 flex flex-wrap gap-3">
             <Link to="/projects" className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90">
               View our work <ArrowRight className="h-4 w-4" />
             </Link>
