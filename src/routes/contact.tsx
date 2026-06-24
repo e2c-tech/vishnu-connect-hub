@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Mail, Phone, MapPin, Send, CheckCircle2, MessageCircle, Building2 } from "lucide-react";
 import { COMPANY } from "@/lib/site-data";
 import { SectionHeading } from "@/components/site/SectionHeading";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -25,33 +26,35 @@ function ContactPage() {
     setLoading(true);
     const form = e.currentTarget;
     const data = new FormData(form);
+    const payload = {
+      name: String(data.get("name") ?? ""),
+      email: String(data.get("email") ?? ""),
+      phone: String(data.get("phone") ?? "") || null,
+      city: String(data.get("company") ?? "") || null,
+      service: String(data.get("type") ?? "") || null,
+      message: String(data.get("message") ?? ""),
+      source: "contact_page",
+      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+    };
+    // 1) Persist in admin inbox (Lovable Cloud)
+    await supabase.from("contact_submissions").insert(payload);
+    // 2) Also relay to email via FormSubmit.co for instant notification
     try {
-      // FormSubmit.co relays the form to COMPANY.email without a backend.
-      // First message from a new browser triggers a one-time email-confirmation
-      // step at info@srivishnu.in — after confirmation, every submission is
-      // delivered straight to the inbox.
       await fetch(`https://formsubmit.co/ajax/${COMPANY.email}`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          _subject: `New enquiry from ${data.get("name") || "website"}`,
+          _subject: `New enquiry from ${payload.name || "website"}`,
           _template: "table",
           _captcha: "false",
-          name: data.get("name"),
-          email: data.get("email"),
-          phone: data.get("phone"),
-          company: data.get("company"),
-          projectType: data.get("type"),
-          message: data.get("message"),
-          source: "srivishnu.in contact form",
+          ...payload,
         }),
       });
-    } catch {
-      /* swallow — still confirm to user */
-    }
+    } catch { /* ignore — already saved in admin */ }
     setLoading(false);
     setSent(true);
   };
+
 
   return (
     <>
