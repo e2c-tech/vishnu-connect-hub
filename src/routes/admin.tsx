@@ -73,14 +73,17 @@ function AdminLayout() {
           <div className="truncate text-[11px] text-muted-foreground">{email}</div>
         </div>
         <nav className="space-y-0.5">
-          {NAV.map(({ to, label, Icon, exact }) => (
-            <Link key={to} to={to}
-              activeOptions={{ exact: !!exact }}
-              activeProps={{ className: "bg-primary/15 text-primary" }}
-              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              <Icon className="h-4 w-4" /> {label}
-            </Link>
-          ))}
+          {NAV.map((item) => {
+            const Icon = item.Icon;
+            return (
+              <Link key={item.to} to={item.to}
+                activeOptions={{ exact: "exact" in item ? !!item.exact : false }}
+                activeProps={{ className: "bg-primary/15 text-primary" }}
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
+                <Icon className="h-4 w-4" /> {item.label}
+              </Link>
+            );
+          })}
         </nav>
         <button onClick={signOut}
           className="mt-4 flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted">
