@@ -14,7 +14,7 @@ function AdminTesti() {
   const [editing, setEditing] = useState<Partial<Testimonial> | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const load = async () => { const { data } = await supabase.from("testimonials").select("*").order("sort_order"); setRows((data ?? []) as Testimonial[]); };
+  const load = async () => { const { data } = await supabase.from("testimonials").select("*").order("sort_order"); setRows((data ?? []) as unknown as Testimonial[]); };
   useEffect(() => { load(); }, []);
 
   const save = async () => {

@@ -21,7 +21,7 @@ function AdminBlogs() {
 
   const load = async () => {
     const { data } = await supabase.from("blogs").select("*").order("published_at", { ascending: false });
-    setRows((data ?? []) as Blog[]);
+    setRows((data ?? []) as unknown as Blog[]);
   };
   useEffect(() => { load(); }, []);
 

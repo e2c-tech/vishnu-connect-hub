@@ -24,7 +24,7 @@ function AdminProjects() {
 
   const load = async () => {
     const { data } = await supabase.from("projects").select("*").order("sort_order").order("created_at", { ascending: false });
-    setRows((data ?? []) as Project[]);
+    setRows((data ?? []) as unknown as Project[]);
   };
   useEffect(() => { load(); }, []);
 

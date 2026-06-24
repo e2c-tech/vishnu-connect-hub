@@ -16,7 +16,7 @@ function AdminAbout() {
   useEffect(() => {
     (async () => {
       const { data } = await supabase.from("about_content").select("*").eq("id", 1).maybeSingle();
-      if (data) setData(data as AboutContent);
+      if (data) setData(data as unknown as AboutContent);
     })();
   }, []);
 

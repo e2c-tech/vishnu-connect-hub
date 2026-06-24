@@ -14,7 +14,7 @@ function AdminFounders() {
   const [editing, setEditing] = useState<Partial<Founder> | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const load = async () => { const { data } = await supabase.from("founders").select("*").order("sort_order"); setRows((data ?? []) as Founder[]); };
+  const load = async () => { const { data } = await supabase.from("founders").select("*").order("sort_order"); setRows((data ?? []) as unknown as Founder[]); };
   useEffect(() => { load(); }, []);
 
   const save = async () => {

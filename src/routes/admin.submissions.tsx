@@ -14,7 +14,7 @@ function AdminSubs() {
 
   const load = async () => {
     const { data } = await supabase.from("contact_submissions").select("*").order("created_at", { ascending: false });
-    setRows((data ?? []) as ContactSubmission[]);
+    setRows((data ?? []) as unknown as ContactSubmission[]);
   };
   useEffect(() => { load(); }, []);
 
