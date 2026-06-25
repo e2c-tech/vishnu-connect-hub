@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { HeroTile } from "@/lib/cms-types";
 import { Field, inputCls, textareaCls, PrimaryBtn, GhostBtn } from "@/components/admin/ui";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { CheckCircle2, Plus, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/settings")({ component: AdminSettings });
@@ -26,7 +27,7 @@ function AdminSettings() {
     setBusy(false); setSaved(true); setTimeout(() => setSaved(false), 2500);
   };
 
-  const add = () => setTiles([...tiles, { eyebrow: "", headline: "", sub: "" }]);
+  const add = () => setTiles([...tiles, { eyebrow: "", headline: "", sub: "", image_url: "" }]);
   const upd = (i: number, p: Partial<HeroTile>) => setTiles(tiles.map((t, idx) => idx === i ? { ...t, ...p } : t));
   const del = (i: number) => setTiles(tiles.filter((_, idx) => idx !== i));
 
@@ -47,6 +48,7 @@ function AdminSettings() {
               <Field label="Headline"><input className={inputCls} value={t.headline} onChange={(e) => upd(i, { headline: e.target.value })} /></Field>
             </div>
             <Field label="Subtext"><textarea className={textareaCls} rows={2} value={t.sub} onChange={(e) => upd(i, { sub: e.target.value })} /></Field>
+            <div className="mt-3"><ImageUpload label="Background image (optional — falls back to default banner)" prefix="hero" value={t.image_url ?? ""} onChange={(v) => upd(i, { image_url: v })} /></div>
           </div>
         ))}
         <GhostBtn onClick={add}><Plus className="mr-1 inline h-4 w-4" />Add slide</GhostBtn>

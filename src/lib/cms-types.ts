@@ -68,6 +68,7 @@ export type HeroTile = {
   eyebrow: string;
   headline: string;
   sub: string;
+  image_url?: string;
 };
 
 export type SiteSettings = {

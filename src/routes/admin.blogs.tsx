@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Blog } from "@/lib/cms-types";
-import { Modal, Field, inputCls, textareaCls, PrimaryBtn, GhostBtn, DangerBtn } from "@/components/admin/ui";
+import { Modal, Field, inputCls, textareaCls, PrimaryBtn, GhostBtn } from "@/components/admin/ui";
+import { ImageUpload } from "@/components/admin/ImageUpload";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
 
 export const Route = createFileRoute("/admin/blogs")({ component: AdminBlogs });
@@ -87,12 +89,16 @@ function AdminBlogs() {
               <Field label="Author"><input className={inputCls} value={editing.author ?? ""} onChange={(e) => setEditing({ ...editing, author: e.target.value })} /></Field>
               <Field label="Published date"><input type="date" className={inputCls} value={(editing.published_at ?? "").slice(0,10)} onChange={(e) => setEditing({ ...editing, published_at: new Date(e.target.value).toISOString() })} /></Field>
             </div>
-            <Field label="Cover image URL"><input className={inputCls} value={editing.cover_url ?? ""} onChange={(e) => setEditing({ ...editing, cover_url: e.target.value })} placeholder="https://… or /seed/x.jpg" /></Field>
+            <ImageUpload label="Cover image" prefix="blogs" value={editing.cover_url ?? ""} onChange={(v) => setEditing({ ...editing, cover_url: v })} />
             <Field label="Tags (comma separated)">
               <input className={inputCls} value={(editing.tags ?? []).join(", ")} onChange={(e) => setEditing({ ...editing, tags: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })} />
             </Field>
             <Field label="Excerpt"><textarea className={textareaCls} rows={2} value={editing.excerpt ?? ""} onChange={(e) => setEditing({ ...editing, excerpt: e.target.value })} /></Field>
-            <Field label="Body"><textarea className={textareaCls} rows={8} value={editing.body ?? ""} onChange={(e) => setEditing({ ...editing, body: e.target.value })} /></Field>
+            <div>
+              <div className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Body</div>
+              <RichTextEditor value={editing.body ?? ""} onChange={(v) => setEditing({ ...editing, body: v })} minHeight={280} />
+            </div>
+
             <Field label="Additional media URLs (one per line)">
               <textarea className={textareaCls} rows={3} value={(editing.media_urls ?? []).join("\n")} onChange={(e) => setEditing({ ...editing, media_urls: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean) })} />
             </Field>

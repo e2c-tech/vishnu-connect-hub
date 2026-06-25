@@ -57,7 +57,7 @@ function ProjectDetail() {
       <div className="mt-10 grid gap-10 md:grid-cols-3">
         <div className="md:col-span-2">
           <h2 className="font-display text-2xl uppercase">Project Overview</h2>
-          <p className="mt-4 leading-relaxed text-muted-foreground">{project.description}</p>
+          <div className="prose prose-sm mt-4 max-w-none leading-relaxed text-muted-foreground dark:prose-invert" dangerouslySetInnerHTML={{ __html: project.description ?? "" }} />
           <p className="mt-4 leading-relaxed text-muted-foreground">
             Our scope included design coordination, scaffolding engineering, structural erection, finishing trades, and quality / safety reporting through to handover.
           </p>

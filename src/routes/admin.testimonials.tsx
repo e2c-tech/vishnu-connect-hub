@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Testimonial } from "@/lib/cms-types";
 import { Modal, Field, inputCls, textareaCls, PrimaryBtn, GhostBtn } from "@/components/admin/ui";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/testimonials")({ component: AdminTesti });
@@ -75,6 +76,7 @@ function AdminTesti() {
             ) : (
               <Field label="Quote"><textarea className={textareaCls} rows={4} value={editing.quote ?? ""} onChange={(e) => setEditing({ ...editing, quote: e.target.value })} /></Field>
             )}
+            <ImageUpload label="Avatar / photo" prefix="testimonials" value={editing.avatar_url ?? ""} onChange={(v) => setEditing({ ...editing, avatar_url: v })} />
             <Field label="Sort order"><input type="number" className={inputCls} value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: Number(e.target.value) })} /></Field>
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={editing.published ?? true} onChange={(e) => setEditing({ ...editing, published: e.target.checked })} /> Published

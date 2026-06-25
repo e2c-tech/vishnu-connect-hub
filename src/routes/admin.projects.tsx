@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Project } from "@/lib/cms-types";
 import { Modal, Field, inputCls, textareaCls, PrimaryBtn, GhostBtn, DangerBtn } from "@/components/admin/ui";
-import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { ImageUpload, uploadToMedia } from "@/components/admin/ImageUpload";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { Plus, Pencil, Trash2, Eye, EyeOff, Upload, X } from "lucide-react";
 
 export const Route = createFileRoute("/admin/projects")({ component: AdminProjects });
 
@@ -111,18 +113,18 @@ function AdminProjects() {
               <Field label="Year"><input className={inputCls} value={editing.year ?? ""} onChange={(e) => setEditing({ ...editing, year: e.target.value })} /></Field>
               <Field label="Client"><input className={inputCls} value={editing.client ?? ""} onChange={(e) => setEditing({ ...editing, client: e.target.value })} /></Field>
             </div>
-            <Field label="Cover image URL" hint="Paste a hosted image URL. (Tip: upload to imgur/cloudinary/your CDN.)">
-              <input className={inputCls} value={editing.cover_url ?? ""} onChange={(e) => setEditing({ ...editing, cover_url: e.target.value })} placeholder="https://… or /seed/project-x.jpg" />
-            </Field>
+            <ImageUpload label="Cover image" prefix="projects" value={editing.cover_url ?? ""} onChange={(v) => setEditing({ ...editing, cover_url: v })} />
             <Field label="Short description"><textarea className={textareaCls} rows={2} value={editing.short_description ?? ""} onChange={(e) => setEditing({ ...editing, short_description: e.target.value })} /></Field>
-            <Field label="Full description"><textarea className={textareaCls} rows={5} value={editing.description ?? ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} /></Field>
-            <Field label="Gallery media URLs (one per line — images or video URLs)">
-              <textarea className={textareaCls} rows={4}
-                value={(editing.media_urls ?? []).join("\n")}
-                onChange={(e) => setEditing({ ...editing, media_urls: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean) })}
-                placeholder={"https://...\nhttps://..."}
-              />
-            </Field>
+            <div>
+              <div className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Full description</div>
+              <RichTextEditor value={editing.description ?? ""} onChange={(v) => setEditing({ ...editing, description: v })} minHeight={220} />
+            </div>
+            <GalleryEditor
+              items={editing.media_urls ?? []}
+              onChange={(arr) => setEditing({ ...editing, media_urls: arr })}
+              prefix="projects/gallery"
+            />
+
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={editing.published ?? true} onChange={(e) => setEditing({ ...editing, published: e.target.checked })} />
               Published (visible on public site)
@@ -136,6 +138,46 @@ function AdminProjects() {
           </div>
         )}
       </Modal>
+    </div>
+  );
+}
+
+function GalleryEditor({ items, onChange, prefix }: { items: string[]; onChange: (arr: string[]) => void; prefix: string }) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const onPick = async (files: FileList | null) => {
+    if (!files?.length) return;
+    setBusy(true); setErr(null);
+    try {
+      const urls: string[] = [];
+      for (const f of Array.from(files)) urls.push(await uploadToMedia(f, prefix));
+      onChange([...items, ...urls]);
+    } catch (e) { setErr(e instanceof Error ? e.message : "Upload failed"); }
+    finally { setBusy(false); }
+  };
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between">
+        <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Gallery images</span>
+        <label className="cursor-pointer rounded-md border border-border bg-background px-2.5 py-1 text-xs hover:bg-muted">
+          <Upload className="mr-1 inline h-3 w-3" />{busy ? "Uploading…" : "Add images"}
+          <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => { onPick(e.target.files); e.currentTarget.value = ""; }} />
+        </label>
+      </div>
+      {items.length > 0 && (
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+          {items.map((u, i) => (
+            <div key={i} className="group relative">
+              <img src={u} alt="" className="h-20 w-full rounded-md object-cover" />
+              <button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))}
+                className="absolute -right-1 -top-1 rounded-full bg-destructive p-1 text-white opacity-0 group-hover:opacity-100">
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      {err && <p className="mt-1 text-xs text-destructive">{err}</p>}
     </div>
   );
 }

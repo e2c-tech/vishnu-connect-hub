@@ -22,34 +22,37 @@ export function HeroCarousel() {
     });
   }, []);
 
+  const slideImages = tiles.map((t, idx) => t.image_url || BANNER_IMAGES[idx % BANNER_IMAGES.length].src);
+  const slideCount = slideImages.length || BANNER_IMAGES.length;
+
   useEffect(() => {
-    const n = Math.max(BANNER_IMAGES.length, tiles.length);
-    const t = setInterval(() => setI((v) => (v + 1) % n), 5500);
+    const t = setInterval(() => setI((v) => (v + 1) % slideCount), 5500);
     return () => clearInterval(t);
-  }, [tiles.length]);
+  }, [slideCount]);
 
   const tile = tiles[i % tiles.length] ?? DEFAULT_TILES[0];
 
   return (
     <>
       <div className="absolute inset-0 -z-10">
-        {BANNER_IMAGES.map((b, idx) => (
+        {slideImages.map((src, idx) => (
           <img
             key={idx}
-            src={b.src}
-            alt={b.alt}
+            src={src}
+            alt=""
             width={1920}
             height={1080}
             loading={idx === 0 ? "eager" : "lazy"}
             fetchPriority={idx === 0 ? "high" : undefined}
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
-              idx === i % BANNER_IMAGES.length ? "opacity-100 scale-100" : "opacity-0 scale-105"
+              idx === i ? "opacity-100 scale-100" : "opacity-0 scale-105"
             }`}
             style={{ transition: "opacity 1s ease, transform 8s ease" }}
           />
         ))}
         <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />
       </div>
+
 
       {/* per-slide value message overlay (replaces the big SRI VISHNU CONSOL text) */}
       <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6">
@@ -65,7 +68,7 @@ export function HeroCarousel() {
       </div>
 
       <div className="absolute inset-x-0 bottom-6 z-10 flex justify-center gap-2">
-        {Array.from({ length: Math.max(BANNER_IMAGES.length, tiles.length) }).map((_, idx) => (
+        {Array.from({ length: slideCount }).map((_, idx) => (
           <button
             key={idx}
             onClick={() => setI(idx)}
