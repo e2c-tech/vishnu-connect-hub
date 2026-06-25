@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { AboutContent } from "@/lib/cms-types";
 import { Field, inputCls, textareaCls, PrimaryBtn } from "@/components/admin/ui";
+import { ImageUpload } from "@/components/admin/ImageUpload";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/about")({ component: AdminAbout });

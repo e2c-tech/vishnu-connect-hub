@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Founder } from "@/lib/cms-types";
-import { Modal, Field, inputCls, textareaCls, PrimaryBtn, GhostBtn, DangerBtn } from "@/components/admin/ui";
+import { Modal, Field, inputCls, PrimaryBtn, GhostBtn, DangerBtn } from "@/components/admin/ui";
+import { ImageUpload } from "@/components/admin/ImageUpload";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/founders")({ component: AdminFounders });
@@ -66,8 +68,11 @@ function AdminFounders() {
           <div className="space-y-4">
             <Field label="Full name"><input className={inputCls} value={editing.name ?? ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} /></Field>
             <Field label="Title / Role"><input className={inputCls} value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} /></Field>
-            <Field label="Photo URL"><input className={inputCls} value={editing.photo_url ?? ""} onChange={(e) => setEditing({ ...editing, photo_url: e.target.value })} placeholder="https://…" /></Field>
-            <Field label="Bio"><textarea className={textareaCls} rows={6} value={editing.bio ?? ""} onChange={(e) => setEditing({ ...editing, bio: e.target.value })} /></Field>
+            <ImageUpload label="Photo" prefix="founders" value={editing.photo_url ?? ""} onChange={(v) => setEditing({ ...editing, photo_url: v })} />
+            <div>
+              <div className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Bio</div>
+              <RichTextEditor value={editing.bio ?? ""} onChange={(v) => setEditing({ ...editing, bio: v })} minHeight={180} />
+            </div>
             <Field label="Sort order"><input type="number" className={inputCls} value={editing.sort_order ?? 0} onChange={(e) => setEditing({ ...editing, sort_order: Number(e.target.value) })} /></Field>
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={editing.published ?? true} onChange={(e) => setEditing({ ...editing, published: e.target.checked })} /> Published
