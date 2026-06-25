@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Project } from "@/lib/cms-types";
 import { Modal, Field, inputCls, textareaCls, PrimaryBtn, GhostBtn, DangerBtn } from "@/components/admin/ui";
-import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { ImageUpload, uploadToMedia } from "@/components/admin/ImageUpload";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { Plus, Pencil, Trash2, Eye, EyeOff, Upload, X } from "lucide-react";
 
 export const Route = createFileRoute("/admin/projects")({ component: AdminProjects });
 
@@ -111,18 +113,18 @@ function AdminProjects() {
               <Field label="Year"><input className={inputCls} value={editing.year ?? ""} onChange={(e) => setEditing({ ...editing, year: e.target.value })} /></Field>
               <Field label="Client"><input className={inputCls} value={editing.client ?? ""} onChange={(e) => setEditing({ ...editing, client: e.target.value })} /></Field>
             </div>
-            <Field label="Cover image URL" hint="Paste a hosted image URL. (Tip: upload to imgur/cloudinary/your CDN.)">
-              <input className={inputCls} value={editing.cover_url ?? ""} onChange={(e) => setEditing({ ...editing, cover_url: e.target.value })} placeholder="https://… or /seed/project-x.jpg" />
-            </Field>
+            <ImageUpload label="Cover image" prefix="projects" value={editing.cover_url ?? ""} onChange={(v) => setEditing({ ...editing, cover_url: v })} />
             <Field label="Short description"><textarea className={textareaCls} rows={2} value={editing.short_description ?? ""} onChange={(e) => setEditing({ ...editing, short_description: e.target.value })} /></Field>
-            <Field label="Full description"><textarea className={textareaCls} rows={5} value={editing.description ?? ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} /></Field>
-            <Field label="Gallery media URLs (one per line — images or video URLs)">
-              <textarea className={textareaCls} rows={4}
-                value={(editing.media_urls ?? []).join("\n")}
-                onChange={(e) => setEditing({ ...editing, media_urls: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean) })}
-                placeholder={"https://...\nhttps://..."}
-              />
-            </Field>
+            <div>
+              <div className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Full description</div>
+              <RichTextEditor value={editing.description ?? ""} onChange={(v) => setEditing({ ...editing, description: v })} minHeight={220} />
+            </div>
+            <GalleryEditor
+              items={editing.media_urls ?? []}
+              onChange={(arr) => setEditing({ ...editing, media_urls: arr })}
+              prefix="projects/gallery"
+            />
+
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" checked={editing.published ?? true} onChange={(e) => setEditing({ ...editing, published: e.target.checked })} />
               Published (visible on public site)
