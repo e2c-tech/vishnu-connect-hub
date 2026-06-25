@@ -37,10 +37,10 @@ function AdminAbout() {
 
       <div className="mt-6 space-y-4 rounded-2xl border border-border bg-background p-6">
         <Field label="Heading"><input className={inputCls} value={data.heading ?? ""} onChange={(e) => setData({ ...data, heading: e.target.value })} /></Field>
-        <Field label="Intro"><textarea className={textareaCls} rows={3} value={data.intro ?? ""} onChange={(e) => setData({ ...data, intro: e.target.value })} /></Field>
-        <Field label="Mission"><textarea className={textareaCls} rows={4} value={data.mission ?? ""} onChange={(e) => setData({ ...data, mission: e.target.value })} /></Field>
-        <Field label="Vision"><textarea className={textareaCls} rows={4} value={data.vision ?? ""} onChange={(e) => setData({ ...data, vision: e.target.value })} /></Field>
-        <Field label="Image URL"><input className={inputCls} value={data.image_url ?? ""} onChange={(e) => setData({ ...data, image_url: e.target.value })} placeholder="https://… or /seed/about-construction.jpg" /></Field>
+        <div><div className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Intro</div><RichTextEditor value={data.intro ?? ""} onChange={(v) => setData({ ...data, intro: v })} minHeight={120} /></div>
+        <div><div className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Mission</div><RichTextEditor value={data.mission ?? ""} onChange={(v) => setData({ ...data, mission: v })} minHeight={140} /></div>
+        <div><div className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Vision</div><RichTextEditor value={data.vision ?? ""} onChange={(v) => setData({ ...data, vision: v })} minHeight={140} /></div>
+        <ImageUpload label="About image" prefix="about" value={data.image_url ?? ""} onChange={(v) => setData({ ...data, image_url: v })} />
 
         {err && <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{err}</p>}
         <div className="flex items-center justify-end gap-3">
