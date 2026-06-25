@@ -52,7 +52,7 @@ function BlogPost() {
       </div>
       <div className="prose prose-neutral mt-8 max-w-none">
         <p className="text-lg leading-relaxed text-muted-foreground">{post.excerpt}</p>
-        <p className="mt-6 leading-relaxed">{post.body}</p>
+        <div className="prose prose-sm mt-6 max-w-none leading-relaxed dark:prose-invert" dangerouslySetInnerHTML={{ __html: post.body ?? "" }} />
       </div>
       <div className="mt-10 border-t border-border pt-6">
         <ShareButtons title={post.title} />
