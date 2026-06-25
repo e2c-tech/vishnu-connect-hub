@@ -141,3 +141,43 @@ function AdminProjects() {
     </div>
   );
 }
+
+function GalleryEditor({ items, onChange, prefix }: { items: string[]; onChange: (arr: string[]) => void; prefix: string }) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const onPick = async (files: FileList | null) => {
+    if (!files?.length) return;
+    setBusy(true); setErr(null);
+    try {
+      const urls: string[] = [];
+      for (const f of Array.from(files)) urls.push(await uploadToMedia(f, prefix));
+      onChange([...items, ...urls]);
+    } catch (e) { setErr(e instanceof Error ? e.message : "Upload failed"); }
+    finally { setBusy(false); }
+  };
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between">
+        <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Gallery images</span>
+        <label className="cursor-pointer rounded-md border border-border bg-background px-2.5 py-1 text-xs hover:bg-muted">
+          <Upload className="mr-1 inline h-3 w-3" />{busy ? "Uploading…" : "Add images"}
+          <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => { onPick(e.target.files); e.currentTarget.value = ""; }} />
+        </label>
+      </div>
+      {items.length > 0 && (
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+          {items.map((u, i) => (
+            <div key={i} className="group relative">
+              <img src={u} alt="" className="h-20 w-full rounded-md object-cover" />
+              <button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))}
+                className="absolute -right-1 -top-1 rounded-full bg-destructive p-1 text-white opacity-0 group-hover:opacity-100">
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      {err && <p className="mt-1 text-xs text-destructive">{err}</p>}
+    </div>
+  );
+}
