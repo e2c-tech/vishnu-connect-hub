@@ -91,13 +91,13 @@ function AboutPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <SectionHeading eyebrow="Leadership" title="OUR PARTNERS" align="center" />
           <div className="mt-14 grid gap-10 md:grid-cols-2">
-            {team.map((m) => (
+            {team.map((m: FounderView) => (
               <article key={m.name} className="rounded-md border border-border bg-background p-8">
                 {m.photo ? (
                   <img src={m.photo} alt={m.name} className="mx-auto h-32 w-32 rounded-full object-cover" loading="lazy" width={256} height={256} />
                 ) : (
                   <div className="mx-auto flex h-32 w-32 items-center justify-center rounded-full bg-primary text-primary-foreground font-display text-3xl">
-                    {m.name.split(" ").map((w) => w[0]).join("").slice(0, 2)}
+                    {m.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2)}
                   </div>
                 )}
                 <h3 className="mt-6 text-center font-display text-2xl text-primary">{m.name}</h3>

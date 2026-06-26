@@ -50,7 +50,7 @@ function BlogIndex() {
         Lessons from our sites — engineering, safety, sustainability and project delivery.
       </SectionHeading>
       <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {posts.map((p) => (
+        {posts.map((p: PostCard) => (
           <Link key={p.slug} to="/blog/$slug" params={{ slug: p.slug }}
                 className="group flex flex-col overflow-hidden rounded-md border border-border bg-background hover:shadow-lg transition-shadow">
             <div className="aspect-[16/9] overflow-hidden bg-muted">

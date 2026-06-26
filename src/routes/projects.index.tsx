@@ -61,7 +61,7 @@ function ProjectsIndex() {
 
       <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((p) => (
+          {projects.map((p: ProjectCard) => (
             <Link key={p.slug} to="/projects/$slug" params={{ slug: p.slug }}
                   className="group flex flex-col overflow-hidden rounded-md border border-border bg-background transition-shadow hover:shadow-lg">
               <div className="aspect-[4/3] overflow-hidden bg-muted">
