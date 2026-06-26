@@ -1,7 +1,10 @@
-import { COMPANY } from "@/lib/site-data";
+import { DEFAULT_CONTACT_INFO } from "@/lib/site-branding";
+import { useSiteBranding } from "@/lib/use-site-branding";
 
 export function WhatsAppButton() {
-  const href = `https://wa.me/${COMPANY.whatsapp}?text=${encodeURIComponent(
+  const { contactInfo } = useSiteBranding();
+  const whatsapp = contactInfo?.whatsapp ?? DEFAULT_CONTACT_INFO.whatsapp;
+  const href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(
     "Hi Sri Vishnu Consol, I'd like to know more about your services."
   )}`;
   return (

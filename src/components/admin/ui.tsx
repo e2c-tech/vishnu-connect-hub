@@ -40,3 +40,36 @@ export function GhostBtn(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
 export function DangerBtn(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return <button {...props} className={"rounded-lg border border-destructive/40 px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 " + (props.className ?? "")} />;
 }
+
+export function ColorField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <Field label={label}>
+      <div className="flex items-center gap-3">
+        <input type="color" value={value} onChange={(e) => onChange(e.target.value)} className="h-10 w-14 cursor-pointer rounded border border-input" />
+        <input className={inputCls} value={value} onChange={(e) => onChange(e.target.value)} placeholder="#000000" />
+      </div>
+    </Field>
+  );
+}
+
+export function AdminSaveBar({
+  err,
+  saved,
+  busy,
+  onSave,
+  label = "Save",
+}: {
+  err: string | null;
+  saved: boolean;
+  busy: boolean;
+  onSave: () => void;
+  label?: string;
+}) {
+  return (
+    <div className="flex items-center justify-end gap-3">
+      {err && <p className="mr-auto text-sm text-destructive">{err}</p>}
+      {saved && <span className="flex items-center gap-1 text-sm text-primary">Saved</span>}
+      <PrimaryBtn onClick={onSave} disabled={busy}>{busy ? "Saving…" : label}</PrimaryBtn>
+    </div>
+  );
+}

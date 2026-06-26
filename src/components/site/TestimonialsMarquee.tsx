@@ -1,8 +1,11 @@
 import { Quote } from "lucide-react";
-import { TESTIMONIALS } from "@/lib/site-data";
+import type { Testimonial } from "@/lib/site-data";
 
-export function TestimonialsMarquee() {
-  const loop = [...TESTIMONIALS, ...TESTIMONIALS];
+type Props = { items: Testimonial[] };
+
+export function TestimonialsMarquee({ items }: Props) {
+  if (!items.length) return null;
+  const loop = [...items, ...items];
   return (
     <div className="relative overflow-hidden" style={{ maskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)" }}>
       <div className="flex w-max gap-5 animate-[marquee_60s_linear_infinite] hover:[animation-play-state:paused]">

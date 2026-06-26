@@ -5,6 +5,7 @@ import type { Testimonial } from "@/lib/cms-types";
 import { Modal, Field, inputCls, textareaCls, PrimaryBtn, GhostBtn } from "@/components/admin/ui";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { toVideoEmbedUrl } from "@/lib/video-embed";
 
 export const Route = createFileRoute("/admin/testimonials")({ component: AdminTesti });
 
@@ -20,9 +21,11 @@ function AdminTesti() {
 
   const save = async () => {
     if (!editing) return; setBusy(true);
+    const rawVideoUrl = editing.video_embed_url?.trim() || null;
     const payload = {
       name: editing.name ?? "", role: editing.role ?? null, quote: editing.quote ?? null,
-      kind: editing.kind ?? "text", video_embed_url: editing.video_embed_url ?? null,
+      kind: editing.kind ?? "text",
+      video_embed_url: rawVideoUrl ? (toVideoEmbedUrl(rawVideoUrl) ?? rawVideoUrl) : null,
       published: editing.published ?? true, sort_order: editing.sort_order ?? 0,
     };
     const q = editing.id ? supabase.from("testimonials").update(payload).eq("id", editing.id) : supabase.from("testimonials").insert(payload);
@@ -70,8 +73,8 @@ function AdminTesti() {
             <Field label="Name"><input className={inputCls} value={editing.name ?? ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} /></Field>
             <Field label="Role / Company"><input className={inputCls} value={editing.role ?? ""} onChange={(e) => setEditing({ ...editing, role: e.target.value })} /></Field>
             {editing.kind === "video" ? (
-              <Field label="Video embed URL" hint="Use the YouTube/Vimeo embed URL, e.g. https://www.youtube.com/embed/VIDEO_ID">
-                <input className={inputCls} value={editing.video_embed_url ?? ""} onChange={(e) => setEditing({ ...editing, video_embed_url: e.target.value })} />
+              <Field label="Video URL" hint="Paste any YouTube or Vimeo link — watch, share, or embed URLs all work.">
+                <input className={inputCls} value={editing.video_embed_url ?? ""} onChange={(e) => setEditing({ ...editing, video_embed_url: e.target.value })} placeholder="https://www.youtube.com/watch?v=…" />
               </Field>
             ) : (
               <Field label="Quote"><textarea className={textareaCls} rows={4} value={editing.quote ?? ""} onChange={(e) => setEditing({ ...editing, quote: e.target.value })} /></Field>

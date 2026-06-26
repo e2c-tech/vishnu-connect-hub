@@ -2,8 +2,6 @@ import { useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Upload, Link as LinkIcon, X, Loader2 } from "lucide-react";
 
-const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
-
 export async function uploadToMedia(file: File, prefix = "uploads"): Promise<string> {
   const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
   const path = `${prefix}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
@@ -13,9 +11,9 @@ export async function uploadToMedia(file: File, prefix = "uploads"): Promise<str
     contentType: file.type || undefined,
   });
   if (error) throw error;
-  const { data, error: signErr } = await supabase.storage.from("media").createSignedUrl(path, TEN_YEARS);
-  if (signErr || !data?.signedUrl) throw signErr ?? new Error("Could not create signed URL");
-  return data.signedUrl;
+  const { data } = supabase.storage.from("media").getPublicUrl(path);
+  if (!data?.publicUrl) throw new Error("Could not create public URL");
+  return data.publicUrl;
 }
 
 export function ImageUpload({

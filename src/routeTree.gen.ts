@@ -24,11 +24,14 @@ import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as ApiContactNotifyRouteImport } from './routes/api/contact-notify'
 import { Route as AdminTestimonialsRouteImport } from './routes/admin.testimonials'
 import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminProjectsRouteImport } from './routes/admin.projects'
+import { Route as AdminHomepageServicesRouteImport } from './routes/admin.homepage-services'
 import { Route as AdminFoundersRouteImport } from './routes/admin.founders'
+import { Route as AdminContactDetailsRouteImport } from './routes/admin.contact-details'
 import { Route as AdminBlogsRouteImport } from './routes/admin.blogs'
 import { Route as AdminAboutRouteImport } from './routes/admin.about'
 
@@ -107,6 +110,11 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => BlogRoute,
 } as any)
+const ApiContactNotifyRoute = ApiContactNotifyRouteImport.update({
+  id: '/api/contact-notify',
+  path: '/api/contact-notify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminTestimonialsRoute = AdminTestimonialsRouteImport.update({
   id: '/testimonials',
   path: '/testimonials',
@@ -127,9 +135,19 @@ const AdminProjectsRoute = AdminProjectsRouteImport.update({
   path: '/projects',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminHomepageServicesRoute = AdminHomepageServicesRouteImport.update({
+  id: '/homepage-services',
+  path: '/homepage-services',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminFoundersRoute = AdminFoundersRouteImport.update({
   id: '/founders',
   path: '/founders',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContactDetailsRoute = AdminContactDetailsRouteImport.update({
+  id: '/contact-details',
+  path: '/contact-details',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminBlogsRoute = AdminBlogsRouteImport.update({
@@ -156,11 +174,14 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/admin/about': typeof AdminAboutRoute
   '/admin/blogs': typeof AdminBlogsRoute
+  '/admin/contact-details': typeof AdminContactDetailsRoute
   '/admin/founders': typeof AdminFoundersRoute
+  '/admin/homepage-services': typeof AdminHomepageServicesRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
+  '/api/contact-notify': typeof ApiContactNotifyRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -177,11 +198,14 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/admin/about': typeof AdminAboutRoute
   '/admin/blogs': typeof AdminBlogsRoute
+  '/admin/contact-details': typeof AdminContactDetailsRoute
   '/admin/founders': typeof AdminFoundersRoute
+  '/admin/homepage-services': typeof AdminHomepageServicesRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
+  '/api/contact-notify': typeof ApiContactNotifyRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/admin': typeof AdminIndexRoute
@@ -202,11 +226,14 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/admin/about': typeof AdminAboutRoute
   '/admin/blogs': typeof AdminBlogsRoute
+  '/admin/contact-details': typeof AdminContactDetailsRoute
   '/admin/founders': typeof AdminFoundersRoute
+  '/admin/homepage-services': typeof AdminHomepageServicesRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
+  '/api/contact-notify': typeof ApiContactNotifyRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -228,11 +255,14 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/about'
     | '/admin/blogs'
+    | '/admin/contact-details'
     | '/admin/founders'
+    | '/admin/homepage-services'
     | '/admin/projects'
     | '/admin/settings'
     | '/admin/submissions'
     | '/admin/testimonials'
+    | '/api/contact-notify'
     | '/blog/$slug'
     | '/projects/$slug'
     | '/admin/'
@@ -249,11 +279,14 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/about'
     | '/admin/blogs'
+    | '/admin/contact-details'
     | '/admin/founders'
+    | '/admin/homepage-services'
     | '/admin/projects'
     | '/admin/settings'
     | '/admin/submissions'
     | '/admin/testimonials'
+    | '/api/contact-notify'
     | '/blog/$slug'
     | '/projects/$slug'
     | '/admin'
@@ -273,11 +306,14 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/about'
     | '/admin/blogs'
+    | '/admin/contact-details'
     | '/admin/founders'
+    | '/admin/homepage-services'
     | '/admin/projects'
     | '/admin/settings'
     | '/admin/submissions'
     | '/admin/testimonials'
+    | '/api/contact-notify'
     | '/blog/$slug'
     | '/projects/$slug'
     | '/admin/'
@@ -296,6 +332,7 @@ export interface RootRouteChildren {
   ProjectsRoute: typeof ProjectsRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  ApiContactNotifyRoute: typeof ApiContactNotifyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -405,6 +442,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof BlogRoute
     }
+    '/api/contact-notify': {
+      id: '/api/contact-notify'
+      path: '/api/contact-notify'
+      fullPath: '/api/contact-notify'
+      preLoaderRoute: typeof ApiContactNotifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/testimonials': {
       id: '/admin/testimonials'
       path: '/testimonials'
@@ -433,11 +477,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProjectsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/homepage-services': {
+      id: '/admin/homepage-services'
+      path: '/homepage-services'
+      fullPath: '/admin/homepage-services'
+      preLoaderRoute: typeof AdminHomepageServicesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/founders': {
       id: '/admin/founders'
       path: '/founders'
       fullPath: '/admin/founders'
       preLoaderRoute: typeof AdminFoundersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/contact-details': {
+      id: '/admin/contact-details'
+      path: '/contact-details'
+      fullPath: '/admin/contact-details'
+      preLoaderRoute: typeof AdminContactDetailsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/blogs': {
@@ -460,7 +518,9 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminAboutRoute: typeof AdminAboutRoute
   AdminBlogsRoute: typeof AdminBlogsRoute
+  AdminContactDetailsRoute: typeof AdminContactDetailsRoute
   AdminFoundersRoute: typeof AdminFoundersRoute
+  AdminHomepageServicesRoute: typeof AdminHomepageServicesRoute
   AdminProjectsRoute: typeof AdminProjectsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSubmissionsRoute: typeof AdminSubmissionsRoute
@@ -471,7 +531,9 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAboutRoute: AdminAboutRoute,
   AdminBlogsRoute: AdminBlogsRoute,
+  AdminContactDetailsRoute: AdminContactDetailsRoute,
   AdminFoundersRoute: AdminFoundersRoute,
+  AdminHomepageServicesRoute: AdminHomepageServicesRoute,
   AdminProjectsRoute: AdminProjectsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSubmissionsRoute: AdminSubmissionsRoute,
@@ -518,7 +580,18 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsRoute: ProjectsRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  ApiContactNotifyRoute: ApiContactNotifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

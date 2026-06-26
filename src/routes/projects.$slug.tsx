@@ -3,6 +3,7 @@ import { ArrowLeft, MapPin, Calendar, Briefcase } from "lucide-react";
 import { PROJECTS } from "@/lib/site-data";
 import { supabase } from "@/integrations/supabase/client";
 import { ShareButtons } from "@/components/site/ShareButtons";
+import { buildShareMeta, getSiteOrigin, stripHtml } from "@/lib/social-meta";
 
 type ProjectView = {
   slug: string;
@@ -52,24 +53,16 @@ export const Route = createFileRoute("/projects/$slug")({
   },
   head: ({ loaderData }) => {
     const p = loaderData?.project;
-    const desc = p?.shortDescription || "";
-    return {
-      meta: [
-        { title: p ? `${p.title} — Sri Vishnu Consol` : "Project" },
-        { name: "description", content: desc },
-        { property: "og:title", content: p?.title ?? "" },
-        { property: "og:description", content: desc },
-        { property: "og:type", content: "article" },
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: p?.title ?? "" },
-        { name: "twitter:description", content: desc },
-        ...(p?.cover ? [
-          { property: "og:image", content: p.cover },
-          { property: "og:image:alt", content: p.title },
-          { name: "twitter:image", content: p.cover },
-        ] : []),
-      ],
-    };
+    if (!p) return { meta: [{ title: "Project" }] };
+    const description = p.shortDescription?.trim() || stripHtml(p.description).slice(0, 200);
+    return buildShareMeta({
+      pageTitle: `${p.title} — Sri Vishnu Consol`,
+      title: p.title,
+      description,
+      pathname: `/projects/${p.slug}`,
+      image: p.cover || undefined,
+      type: "article",
+    });
   },
   errorComponent: ({ error }) => (
     <div className="mx-auto max-w-3xl px-4 py-24 text-center">
@@ -126,7 +119,7 @@ function ProjectDetail() {
             {project.client && <div><dt className="text-muted-foreground">Client</dt><dd className="font-medium">{project.client}</dd></div>}
           </dl>
           <div className="mt-6 border-t border-border pt-5">
-            <ShareButtons title={project.title} />
+            <ShareButtons title={project.title} url={`${getSiteOrigin()}/projects/${project.slug}`} />
           </div>
         </aside>
       </div>

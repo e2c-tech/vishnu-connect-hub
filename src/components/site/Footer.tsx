@@ -1,23 +1,28 @@
 import { Link } from "@tanstack/react-router";
-import { Facebook, Instagram, Linkedin, Youtube, Twitter, Mail, Phone, MapPin } from "lucide-react";
-import logo from "@/assets/logo-srivishnu.png";
+import { Mail, Phone, MapPin } from "lucide-react";
+import { BrandWordmark } from "@/components/site/BrandWordmark";
 import { COMPANY } from "@/lib/site-data";
+import { DEFAULT_CONTACT_INFO, DEFAULT_FOOTER_WORDMARK, resolveSocialIcon } from "@/lib/site-branding";
+import { useSiteBranding } from "@/lib/use-site-branding";
 
 export function Footer() {
+  const { logoUrl, footerWordmark, contactInfo, serviceCities, socialLinks, loaded } = useSiteBranding();
+  const wordmark = footerWordmark ?? DEFAULT_FOOTER_WORDMARK;
+  const contact = contactInfo ?? DEFAULT_CONTACT_INFO;
+
   return (
     <footer className="mt-20 border-t border-border bg-[oklch(0.16_0_0)] text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4">
         <div className="md:col-span-1">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="" className="h-12 w-auto" />
-            <div className="leading-tight">
-              <div className="font-display">SRI VISHNU</div>
-              <div className="text-[10px] tracking-[0.2em] text-white/60">CONSOL PVT LTD</div>
-            </div>
+            {loaded && logoUrl && <img src={logoUrl} alt="" className="h-12 w-auto" />}
+            {loaded && (
+              <BrandWordmark wordmark={wordmark} line1ClassName="font-display" line2ClassName="text-[10px] tracking-[0.2em]" />
+            )}
           </div>
           <p className="mt-4 text-sm text-white/70">{COMPANY.tagline}.</p>
           <p className="mt-4 text-xs text-white/50">
-            CIN: <span className="text-white/80">{COMPANY.cin}</span>
+            CIN: <span className="text-white/80">{contact.cin}</span>
           </p>
           <p className="mt-2 text-xs text-white/50">
             GST/PAN registered Indian Private Limited Company.
@@ -39,11 +44,13 @@ export function Footer() {
 
         <div>
           <h4 className="font-display text-sm tracking-widest">SERVING ACROSS</h4>
-          <ul className="mt-4 grid grid-cols-2 gap-y-2 text-sm text-white/70">
-            {COMPANY.cities.map((c) => (
-              <li key={c}>{c}</li>
-            ))}
-          </ul>
+          {loaded && (
+            <ul className="mt-4 grid grid-cols-2 gap-y-2 text-sm text-white/70">
+              {serviceCities.map((c) => (
+                <li key={c.name}>{c.name}</li>
+              ))}
+            </ul>
+          )}
           <h4 className="mt-6 font-display text-sm tracking-widest">SERVICES</h4>
           <p className="mt-3 text-sm text-white/70">{COMPANY.services.join(" · ")}</p>
         </div>
@@ -54,28 +61,28 @@ export function Footer() {
             <li className="flex items-start gap-2">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
               <span className="leading-relaxed">
-                {COMPANY.addressLines.map((l, i) => (
+                {contact.address_lines.filter(Boolean).map((l, i) => (
                   <span key={i} className="block">{l}</span>
                 ))}
               </span>
             </li>
-            <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-primary" />{COMPANY.phone}</li>
-            <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-primary" />{COMPANY.email}</li>
+            <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-primary" />{contact.phone}</li>
+            <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-primary" />{contact.email}</li>
           </ul>
-          <div className="mt-5 flex gap-3">
-            {[
-              { href: COMPANY.social.facebook, Icon: Facebook, label: "Facebook" },
-              { href: COMPANY.social.instagram, Icon: Instagram, label: "Instagram" },
-              { href: COMPANY.social.linkedin, Icon: Linkedin, label: "LinkedIn" },
-              { href: COMPANY.social.youtube, Icon: Youtube, label: "YouTube" },
-              { href: COMPANY.social.twitter, Icon: Twitter, label: "Twitter" },
-            ].map(({ href, Icon, label }) => (
-              <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
-                 className="rounded-full border border-white/15 p-2 transition-colors hover:bg-primary hover:text-primary-foreground hover:border-primary">
-                <Icon className="h-4 w-4" />
-              </a>
-            ))}
-          </div>
+          {loaded && (
+            <div className="mt-5 flex flex-wrap gap-3">
+              {socialLinks.map(({ platform, url }, i) => {
+                const Icon = resolveSocialIcon(platform);
+                const label = platform.charAt(0).toUpperCase() + platform.slice(1);
+                return (
+                  <a key={i} href={url} target="_blank" rel="noopener noreferrer" aria-label={label}
+                     className="rounded-full border border-white/15 p-2 transition-colors hover:bg-primary hover:text-primary-foreground hover:border-primary">
+                    <Icon className="h-4 w-4" />
+                  </a>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
       <div className="border-t border-white/10">

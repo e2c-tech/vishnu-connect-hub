@@ -3,6 +3,7 @@ import { ArrowLeft, Clock, User } from "lucide-react";
 import { POSTS } from "@/lib/site-data";
 import { supabase } from "@/integrations/supabase/client";
 import { ShareButtons } from "@/components/site/ShareButtons";
+import { buildShareMeta, getSiteOrigin, stripHtml } from "@/lib/social-meta";
 
 type PostView = {
   slug: string;
@@ -51,24 +52,16 @@ export const Route = createFileRoute("/blog/$slug")({
   },
   head: ({ loaderData }) => {
     const p = loaderData?.post;
-    const desc = p?.excerpt || "";
-    return {
-      meta: [
-        { title: p ? `${p.title} — Sri Vishnu Consol Blog` : "Blog post" },
-        { name: "description", content: desc },
-        { property: "og:title", content: p?.title ?? "" },
-        { property: "og:description", content: desc },
-        { property: "og:type", content: "article" },
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: p?.title ?? "" },
-        { name: "twitter:description", content: desc },
-        ...(p?.cover ? [
-          { property: "og:image", content: p.cover },
-          { property: "og:image:alt", content: p.title },
-          { name: "twitter:image", content: p.cover },
-        ] : []),
-      ],
-    };
+    if (!p) return { meta: [{ title: "Blog post" }] };
+    const description = p.excerpt?.trim() || stripHtml(p.body).slice(0, 200);
+    return buildShareMeta({
+      pageTitle: `${p.title} — Sri Vishnu Consol Blog`,
+      title: p.title,
+      description,
+      pathname: `/blog/${p.slug}`,
+      image: p.cover || undefined,
+      type: "article",
+    });
   },
   errorComponent: ({ error }) => (
     <div className="mx-auto max-w-3xl px-4 py-24 text-center">
@@ -112,7 +105,7 @@ function BlogPost() {
         <div className="prose prose-sm mt-6 max-w-none leading-relaxed dark:prose-invert" dangerouslySetInnerHTML={{ __html: post.body ?? "" }} />
       </div>
       <div className="mt-10 border-t border-border pt-6">
-        <ShareButtons title={post.title} />
+        <ShareButtons title={post.title} url={`${getSiteOrigin()}/blog/${post.slug}`} />
       </div>
     </article>
   );

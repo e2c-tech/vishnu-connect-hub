@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   LayoutDashboard, Building2, Newspaper, MessageSquareQuote, Info, Users, Inbox,
-  Settings as SettingsIcon, LogOut, ShieldAlert,
+  Settings as SettingsIcon, LogOut, ShieldAlert, Layers, Phone,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
@@ -29,7 +29,9 @@ const NAV = [
   { to: "/admin/about", label: "About", Icon: Info },
   { to: "/admin/founders", label: "Founders", Icon: Users },
   { to: "/admin/submissions", label: "Inquiries", Icon: Inbox },
-  { to: "/admin/settings", label: "Hero / Settings", Icon: SettingsIcon },
+  { to: "/admin/settings", label: "Site Settings", Icon: SettingsIcon },
+  { to: "/admin/homepage-services", label: "Homepage Services", Icon: Layers },
+  { to: "/admin/contact-details", label: "Contact Details", Icon: Phone },
 ] as const;
 
 function AdminLayout() {

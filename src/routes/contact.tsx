@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Mail, Phone, MapPin, Send, CheckCircle2, MessageCircle, Building2 } from "lucide-react";
-import { COMPANY } from "@/lib/site-data";
-import { SectionHeading } from "@/components/site/SectionHeading";
+import { DEFAULT_CONTACT_INFO } from "@/lib/site-branding";
+import { useSiteBranding } from "@/lib/use-site-branding";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/contact")({
@@ -18,12 +18,16 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const { contactInfo } = useSiteBranding();
+  const contact = contactInfo ?? DEFAULT_CONTACT_INFO;
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     const form = e.currentTarget;
     const data = new FormData(form);
     const payload = {
@@ -36,21 +40,24 @@ function ContactPage() {
       source: "contact_page",
       user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
     };
-    // 1) Persist in admin inbox (Lovable Cloud)
-    await supabase.from("contact_submissions").insert(payload);
-    // 2) Also relay to email via FormSubmit.co for instant notification
+
+    const { error: dbError } = await supabase.from("contact_submissions").insert(payload);
+    if (dbError) {
+      setLoading(false);
+      setError("Could not send your message. Please try again or email us directly.");
+      return;
+    }
+
     try {
-      await fetch(`https://formsubmit.co/ajax/${COMPANY.email}`, {
+      await fetch("/api/contact-notify", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          _subject: `New enquiry from ${payload.name || "website"}`,
-          _template: "table",
-          _captcha: "false",
-          ...payload,
-        }),
+        body: JSON.stringify(payload),
       });
-    } catch { /* ignore — already saved in admin */ }
+    } catch {
+      /* enquiry is saved in admin inbox even if email notify fails */
+    }
+
     setLoading(false);
     setSent(true);
   };
@@ -76,20 +83,20 @@ function ContactPage() {
           {/* LEFT — contact cards */}
           <div className="space-y-5 lg:col-span-2">
             <ContactCard Icon={MapPin} label="Head Office">
-              {COMPANY.addressLines.map((l, i) => (
+              {contact.address_lines.filter(Boolean).map((l, i) => (
                 <div key={i}>{l}</div>
               ))}
             </ContactCard>
-            <ContactCard Icon={Phone} label="Phone" href={`tel:${COMPANY.phone.replace(/\s/g, "")}`}>
-              {COMPANY.phone}
+            <ContactCard Icon={Phone} label="Phone" href={`tel:${contact.phone.replace(/\s/g, "")}`}>
+              {contact.phone}
             </ContactCard>
-            <ContactCard Icon={Mail} label="Email" href={`mailto:${COMPANY.email}`}>
-              {COMPANY.email}
+            <ContactCard Icon={Mail} label="Email" href={`mailto:${contact.email}`}>
+              {contact.email}
             </ContactCard>
-            <ContactCard Icon={Building2} label="CIN">{COMPANY.cin}</ContactCard>
+            <ContactCard Icon={Building2} label="CIN">{contact.cin}</ContactCard>
 
             <a
-              href={`https://wa.me/${COMPANY.whatsapp}`}
+              href={`https://wa.me/${contact.whatsapp}`}
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 py-4 font-semibold text-white shadow-lg transition-transform hover:scale-[1.02]"
@@ -109,7 +116,7 @@ function ContactPage() {
                     </div>
                     <h3 className="mt-6 font-display text-3xl uppercase">Message sent</h3>
                     <p className="mt-3 max-w-md text-sm text-muted-foreground">
-                      Thanks for reaching out — a copy has been delivered to {COMPANY.email}. Our team will respond within one business day.
+                      Thanks for reaching out. Our team will respond within one business day.
                     </p>
                   </div>
                 ) : (
@@ -148,6 +155,7 @@ function ContactPage() {
                       {loading ? "Sending…" : "Send message"}
                       <Send className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                     </button>
+                    {error && <p className="text-sm text-destructive">{error}</p>}
                   </form>
                 )}
               </div>

@@ -73,10 +73,54 @@ export type HeroTile = {
 
 export type StatItem = { label: string; value: string };
 
+export type BrandWordmark = {
+  line1: string;
+  line2: string;
+  line1_color: string;
+  line2_color: string;
+};
+
+export type HomeCta = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  button_text: string;
+  button_url: string;
+  bg_color: string;
+};
+
+export type ServiceCard = {
+  title: string;
+  body: string;
+  icon: string;
+  bg_color: string;
+};
+
+export type ServiceCity = { name: string };
+
+export type SocialPlatform = "facebook" | "instagram" | "linkedin" | "youtube" | "twitter";
+
+export type SocialLink = {
+  platform: SocialPlatform;
+  url: string;
+};
+
+export type ContactInfo = {
+  address_lines: string[];
+  phone: string;
+  email: string;
+  cin: string;
+  whatsapp: string;
+};
+
 export type SiteSettings = {
   id: number;
   hero_tiles: HeroTile[];
   stats: StatItem[];
+  logo_url: string | null;
+  service_cards: ServiceCard[];
+  service_cities: ServiceCity[];
+  social_links: SocialLink[];
 };
 
 export type ContactSubmission = {

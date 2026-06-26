@@ -231,18 +231,30 @@ export type Database = {
         Row: {
           hero_tiles: Json
           id: number
+          logo_url: string | null
+          service_cards: Json
+          service_cities: Json
+          social_links: Json
           stats: Json
           updated_at: string
         }
         Insert: {
           hero_tiles?: Json
           id?: number
+          logo_url?: string | null
+          service_cards?: Json
+          service_cities?: Json
+          social_links?: Json
           stats?: Json
           updated_at?: string
         }
         Update: {
           hero_tiles?: Json
           id?: number
+          logo_url?: string | null
+          service_cards?: Json
+          service_cities?: Json
+          social_links?: Json
           stats?: Json
           updated_at?: string
         }

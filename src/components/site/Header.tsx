@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import logo from "@/assets/logo-srivishnu.png";
+import { BrandWordmark } from "@/components/site/BrandWordmark";
 import { COMPANY } from "@/lib/site-data";
+import { DEFAULT_HEADER_WORDMARK } from "@/lib/site-branding";
+import { useSiteBranding } from "@/lib/use-site-branding";
 
 const nav = [
   { to: "/", label: "Home" },
@@ -14,15 +16,17 @@ const nav = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const { logoUrl, headerWordmark, loaded } = useSiteBranding();
+  const wordmark = headerWordmark ?? DEFAULT_HEADER_WORDMARK;
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         <Link to="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-          <img src={logo} alt={COMPANY.name} className="h-12 w-auto" />
-          <div className="hidden sm:block leading-tight">
-            <div className="font-display text-base">SRI VISHNU</div>
-            <div className="text-[10px] tracking-[0.2em] text-muted-foreground">CONSOL PVT LTD</div>
-          </div>
+          {loaded && logoUrl && <img src={logoUrl} alt={COMPANY.name} className="h-12 w-auto" />}
+          {loaded && (
+            <BrandWordmark wordmark={wordmark} className="hidden sm:block" />
+          )}
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
