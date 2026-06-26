@@ -1,10 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { ArrowRight, HardHat, Building2, Leaf, ShieldCheck, MapPin, Calendar } from "lucide-react";
 import construction from "@/assets/about-construction.jpg";
 import { PROJECTS, VIDEO_TESTIMONIALS, COMPANY, SEO_KEYWORDS } from "@/lib/site-data";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { HeroCarousel } from "@/components/site/HeroCarousel";
 import { TestimonialsMarquee } from "@/components/site/TestimonialsMarquee";
+import { supabase } from "@/integrations/supabase/client";
+import type { StatItem } from "@/lib/cms-types";
+
+const DEFAULT_STATS: StatItem[] = [
+  { value: "25+", label: "Projects Delivered" },
+  { value: "12+", label: "Years of Excellence" },
+  { value: "9", label: "Cities Across India" },
+  { value: "100%", label: "Safety Record" },
+];
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -42,6 +52,13 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
+  const [stats, setStats] = useState<StatItem[]>(DEFAULT_STATS);
+  useEffect(() => {
+    supabase.from("site_settings").select("stats").eq("id", 1).maybeSingle().then(({ data }) => {
+      const s = (data?.stats ?? []) as unknown as StatItem[];
+      if (Array.isArray(s) && s.length) setStats(s);
+    });
+  }, []);
   return (
     <>
       {/* HERO */}
@@ -62,15 +79,10 @@ function HomePage() {
       {/* STATS */}
       <section className="border-y border-border bg-[oklch(0.98_0_0)]">
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-10 sm:px-6 md:grid-cols-4">
-          {[
-            { k: "25+", v: "Projects Delivered" },
-            { k: "12+", v: "Years of Excellence" },
-            { k: "9", v: "Cities Across India" },
-            { k: "100%", v: "Safety Record" },
-          ].map((s) => (
-            <div key={s.v} className="text-center">
-              <div className="font-display text-4xl text-primary sm:text-5xl">{s.k}</div>
-              <div className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">{s.v}</div>
+          {stats.map((s) => (
+            <div key={s.label} className="text-center">
+              <div className="font-display text-4xl text-primary sm:text-5xl">{s.value}</div>
+              <div className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">{s.label}</div>
             </div>
           ))}
         </div>
