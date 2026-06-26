@@ -71,9 +71,12 @@ export type HeroTile = {
   image_url?: string;
 };
 
+export type StatItem = { label: string; value: string };
+
 export type SiteSettings = {
   id: number;
   hero_tiles: HeroTile[];
+  stats: StatItem[];
 };
 
 export type ContactSubmission = {
