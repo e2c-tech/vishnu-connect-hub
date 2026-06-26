@@ -51,12 +51,22 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
+type FeaturedProject = { slug: string; title: string; category: string; location: string; year: string; shortDescription: string; cover: string };
+
 function HomePage() {
   const [stats, setStats] = useState<StatItem[]>(DEFAULT_STATS);
+  const [featured, setFeatured] = useState<FeaturedProject[]>(
+    PROJECTS.slice(0, 6).map((p) => ({ slug: p.slug, title: p.title, category: p.category, location: p.location, year: p.year, shortDescription: p.shortDescription, cover: p.cover })),
+  );
   useEffect(() => {
     supabase.from("site_settings").select("stats").eq("id", 1).maybeSingle().then(({ data }) => {
       const s = (data?.stats ?? []) as unknown as StatItem[];
       if (Array.isArray(s) && s.length) setStats(s);
+    });
+    supabase.from("projects").select("slug,title,category,location,year,short_description,cover_url,sort_order").eq("published", true).order("sort_order", { ascending: true }).order("year", { ascending: false }).limit(6).then(({ data }) => {
+      if (data && data.length) {
+        setFeatured(data.map((p) => ({ slug: p.slug, title: p.title, category: p.category ?? "", location: p.location ?? "", year: p.year ?? "", shortDescription: p.short_description ?? "", cover: p.cover_url ?? "" })));
+      }
     });
   }, []);
   return (
@@ -150,7 +160,7 @@ function HomePage() {
           </Link>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {PROJECTS.slice(0, 6).map((p) => (
+          {featured.map((p) => (
             <Link key={p.slug} to="/projects/$slug" params={{ slug: p.slug }} className="group block overflow-hidden rounded-md border border-border hover:shadow-lg transition-shadow">
               <div className="aspect-[4/3] overflow-hidden">
                 <img src={p.cover} alt={p.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" width={1280} height={800} />
