@@ -1,26 +1,81 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, Clock, User } from "lucide-react";
 import { POSTS } from "@/lib/site-data";
+import { supabase } from "@/integrations/supabase/client";
 import { ShareButtons } from "@/components/site/ShareButtons";
 
+type PostView = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  body: string;
+  date: string;
+  author: string;
+  cover: string;
+  readMinutes: number;
+};
+
+async function loadPost(slug: string): Promise<PostView | null> {
+  try {
+    const { data } = await supabase
+      .from("blogs")
+      .select("slug,title,excerpt,body,cover_url,author,published_at,published")
+      .eq("slug", slug)
+      .eq("published", true)
+      .maybeSingle();
+    if (data) {
+      const body = data.body ?? "";
+      const text = body.replace(/<[^>]+>/g, " ");
+      const words = text.split(/\s+/).filter(Boolean).length;
+      return {
+        slug: data.slug,
+        title: data.title,
+        excerpt: data.excerpt ?? "",
+        body,
+        date: data.published_at,
+        author: data.author ?? "Sri Vishnu Editorial",
+        cover: data.cover_url ?? "",
+        readMinutes: Math.max(1, Math.round(words / 200)),
+      };
+    }
+  } catch {/* fall through */}
+  const fb = POSTS.find((p) => p.slug === slug);
+  return fb ?? null;
+}
+
 export const Route = createFileRoute("/blog/$slug")({
-  loader: ({ params }) => {
-    const post = POSTS.find((p) => p.slug === params.slug);
+  loader: async ({ params }) => {
+    const post = await loadPost(params.slug);
     if (!post) throw notFound();
     return { post };
   },
   head: ({ loaderData }) => {
     const p = loaderData?.post;
+    const desc = p?.excerpt || "";
     return {
       meta: [
         { title: p ? `${p.title} — Sri Vishnu Consol Blog` : "Blog post" },
-        { name: "description", content: p?.excerpt ?? "" },
+        { name: "description", content: desc },
         { property: "og:title", content: p?.title ?? "" },
-        { property: "og:description", content: p?.excerpt ?? "" },
-        ...(p ? [{ property: "og:image", content: p.cover }, { name: "twitter:image", content: p.cover }] : []),
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "article" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: p?.title ?? "" },
+        { name: "twitter:description", content: desc },
+        ...(p?.cover ? [
+          { property: "og:image", content: p.cover },
+          { property: "og:image:alt", content: p.title },
+          { name: "twitter:image", content: p.cover },
+        ] : []),
       ],
     };
   },
+  errorComponent: ({ error }) => (
+    <div className="mx-auto max-w-3xl px-4 py-24 text-center">
+      <h1 className="font-display text-3xl">Something went wrong</h1>
+      <p className="mt-3 text-sm text-muted-foreground">{error.message}</p>
+    </div>
+  ),
   notFoundComponent: () => (
     <div className="mx-auto max-w-3xl px-4 py-24 text-center">
       <h1 className="font-display text-4xl">Post not found</h1>
@@ -47,11 +102,13 @@ function BlogPost() {
           <span className="flex items-center gap-1"><Clock className="h-4 w-4 text-primary" />{post.readMinutes} min read</span>
         </div>
       </header>
-      <div className="mt-8 overflow-hidden rounded-md border border-border">
-        <img src={post.cover} alt={post.title} className="h-auto w-full object-cover" width={1280} height={720} />
-      </div>
+      {post.cover && (
+        <div className="mt-8 overflow-hidden rounded-md border border-border">
+          <img src={post.cover} alt={post.title} className="h-auto w-full object-cover" width={1280} height={720} />
+        </div>
+      )}
       <div className="prose prose-neutral mt-8 max-w-none">
-        <p className="text-lg leading-relaxed text-muted-foreground">{post.excerpt}</p>
+        {post.excerpt && <p className="text-lg leading-relaxed text-muted-foreground">{post.excerpt}</p>}
         <div className="prose prose-sm mt-6 max-w-none leading-relaxed dark:prose-invert" dangerouslySetInnerHTML={{ __html: post.body ?? "" }} />
       </div>
       <div className="mt-10 border-t border-border pt-6">
