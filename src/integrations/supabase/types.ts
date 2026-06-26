@@ -231,16 +231,19 @@ export type Database = {
         Row: {
           hero_tiles: Json
           id: number
+          stats: Json
           updated_at: string
         }
         Insert: {
           hero_tiles?: Json
           id?: number
+          stats?: Json
           updated_at?: string
         }
         Update: {
           hero_tiles?: Json
           id?: number
+          stats?: Json
           updated_at?: string
         }
         Relationships: []
